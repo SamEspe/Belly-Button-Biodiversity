@@ -9,25 +9,87 @@ let selector = d3.select("#selDataset");
 
 // Declare functions
 
+// Make Bar Graph Function
+function makeBarGraph(sampleID){
+    console.log(`Make bar graph of sampleID ${sampleID}`)   
+    // Get data for selected sampleID
+    d3.json(url).then(function(data){
+        let samples = data.samples;
+        let sampleData = samples.filter(samples => samples.id == sampleID);
+        console.log(sampleData);
+
+        let sampleValues = sampleData[0].sample_values.slice(0,10).reverse();
+        let otuIDs = sampleData[0].otu_ids.slice(0,10).reverse();
+        let otuLabels = sampleData[0].otu_labels.slice(0,10).reverse();
+        let yticks = otuIDs.slice(0,10).map(otuID => `OTU ${otuID}`);
+
+        // Draw graph with Plotly
+        let barChartData = {
+            type: "bar",
+            x: sampleValues,
+            y: yticks,
+            text: otuLabels,
+            orientation: "h"
+        };
+        
+        let barLayout = {
+            title: "Top 10 OTUs Found in Individual"
+        };
+
+        let barTraceData = [barChartData];
+
+        Plotly.newPlot("bar", barTraceData, barLayout);
+    });
+    };
+
+    
+// Make Bubble Chart Function
+function makeBubbleChart(sampleID){
+    console.log(`Make bubble chart of sampleID ${sampleID}`)  
+
+    d3.json(url).then(function(data){
+    // Get data for selected sampleID
+        let samples = data.samples;
+        let sampleData = samples.filter(samples => samples.id == sampleID);
+        console.log(sampleData);
+        
+        let sampleValues = sampleData[0].sample_values;
+        let otuIDs = sampleData[0].otu_ids;
+        let otuLabels = sampleData[0].otu_labels;
+        
+    // Make Bubble Chart with Plotly
+        let bubbleChartData = {
+            x: otuIDs,
+            y: sampleValues,
+            text: otuLabels,
+            mode: 'markers',
+            marker: {
+                color: otuIDs,
+                size: sampleValues,
+                colorscale: 'Electric'
+            }
+        };
+
+        let bubbleTraceData = [bubbleChartData];
+
+        let bubbleLayout = {
+            title: 'All OTU Groups Found in Individual'
+        }
+
+        Plotly.newPlot("bubble", bubbleTraceData, bubbleLayout);
+    });
+};
+// Show Metadata Function
+function showMetadata(sampleID){
+    console.log(`Display metadata of sampleID ${sampleID}`)  
+};
+
 // Handle Changes - Update graphs
 function optionChanged(sampleID) {
     console.log(`value is: ${sampleID}`);
     makeBarGraph(sampleID);
     makeBubbleChart(sampleID);
     showMetadata(sampleID);
-};
-
-// Make Bar Graph Function
-function makeBarGraph(sampleID){
-  console.log(`Make bar graph of sampleID ${sampleID}`)      
-};
-// Make Bubble Chart Function
-function makeBubbleChart(sampleID){
-    console.log(`Make bubble chart of sampleID ${sampleID}`)  
-};
-// Show Metadata Function
-function showMetadata(sampleID){
-    console.log(`Display metadata of sampleID ${sampleID}`)  
 };
 
 //Create the dashboard
@@ -42,6 +104,7 @@ d3.json(url).then(function(data){
     // Find the value of the dropdown
         let sampleID = selector.property("value");
         console.log(`SampleID is: ${sampleID}`);
+        optionChanged(sampleID);
 
        
 });
