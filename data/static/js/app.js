@@ -91,15 +91,44 @@ function showMetadata(sampleID){
         let sampleBellyButtonType = sampleMetadata[0].bbtype;
         let sampleWashFrequency = sampleMetadata[0].wfreq;
 
-    // Display the data
-    d3.select("#sample-metadata").append("p").text(`Sample ID: ${sampleMetaID}`);
-    d3.select("#sample-metadata").append("p").text(`Ethnicity: ${sampleEthnicity}`);
-    d3.select("#sample-metadata").append("p").text(`Gender: ${sampleGender}`);
-    d3.select("#sample-metadata").append("p").text(`Age: ${sampleAge}`);
-    d3.select("#sample-metadata").append("p").text(`Location: ${sampleLocation}`);
-    d3.select("#sample-metadata").append("p").text(`Belly Button Type: ${sampleBellyButtonType}`);
-    d3.select("#sample-metadata").append("p").text(`Wash Frequency (per week): ${sampleWashFrequency}`);
+        // Display the data
+        d3.select("#sample-metadata").append("p").text(`Sample ID: ${sampleMetaID}`);
+        d3.select("#sample-metadata").append("p").text(`Ethnicity: ${sampleEthnicity}`);
+        d3.select("#sample-metadata").append("p").text(`Gender: ${sampleGender}`);
+        d3.select("#sample-metadata").append("p").text(`Age: ${sampleAge}`);
+        d3.select("#sample-metadata").append("p").text(`Location: ${sampleLocation}`);
+        d3.select("#sample-metadata").append("p").text(`Belly Button Type: ${sampleBellyButtonType}`);
+        d3.select("#sample-metadata").append("p").text(`Wash Frequency (per week): ${sampleWashFrequency}`);
+        });
+};
+
+// Create the Gauge display
+function createGauge(sampleID){
+    // Obtain data to display
+    d3.json(url).then(function(data){
+        // Get data for selected sampleID
+        let metadata = data.metadata;
+        let sampleMetadata = metadata.filter(metadata => metadata.id == sampleID);
+
+        // Extract data from JSON object to display
+        let sampleWashFrequency = sampleMetadata[0].wfreq;
+
+        let gaugeData = {
+            domain: { x: [0, 1], y: [0, 1] },
+            value: sampleWashFrequency,
+            type: "indicator",
+            mode: "gauge+number"
+        };
+
+        let gaugeTraceData = [gaugeData];
+
+        let gaugeLayout = {
+            title: "Number of Washes Per Week"
+        };
+
+        Plotly.newPlot("gauge", gaugeTraceData, gaugeLayout);
     });
+
 };
 
 // Handle Changes - Update graphs
@@ -107,6 +136,7 @@ function optionChanged(sampleID) {
     makeBarGraph(sampleID);
     makeBubbleChart(sampleID);
     showMetadata(sampleID);
+    createGauge(sampleID);
 };
 
 //Create the dashboard
