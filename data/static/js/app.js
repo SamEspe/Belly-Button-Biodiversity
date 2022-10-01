@@ -3,20 +3,17 @@
 const url = "https://2u-data-curriculum-team.s3.amazonaws.com/dataviz-classroom/v1.1/14-Interactive-Web-Visualizations/02-Homework/samples.json";
 
 // Make the dropdown menu to switch between subjects
-
 // let objectValue  = "";
 let selector = d3.select("#selDataset");
 
 // Declare functions
 
 // Make Bar Graph Function
-function makeBarGraph(sampleID){
-    console.log(`Make bar graph of sampleID ${sampleID}`)   
+function makeBarGraph(sampleID){  
     // Get data for selected sampleID
     d3.json(url).then(function(data){
         let samples = data.samples;
         let sampleData = samples.filter(samples => samples.id == sampleID);
-        console.log(sampleData);
 
         let sampleValues = sampleData[0].sample_values.slice(0,10).reverse();
         let otuIDs = sampleData[0].otu_ids.slice(0,10).reverse();
@@ -40,18 +37,15 @@ function makeBarGraph(sampleID){
 
         Plotly.newPlot("bar", barTraceData, barLayout);
     });
-    };
-
+};
     
 // Make Bubble Chart Function
-function makeBubbleChart(sampleID){
-    console.log(`Make bubble chart of sampleID ${sampleID}`)  
+function makeBubbleChart(sampleID){  
 
     d3.json(url).then(function(data){
     // Get data for selected sampleID
         let samples = data.samples;
         let sampleData = samples.filter(samples => samples.id == sampleID);
-        console.log(sampleData);
         
         let sampleValues = sampleData[0].sample_values;
         let otuIDs = sampleData[0].otu_ids;
@@ -79,14 +73,37 @@ function makeBubbleChart(sampleID){
         Plotly.newPlot("bubble", bubbleTraceData, bubbleLayout);
     });
 };
+
 // Show Metadata Function
-function showMetadata(sampleID){
-    console.log(`Display metadata of sampleID ${sampleID}`)  
+function showMetadata(sampleID){  
+    // Obtain data to display
+    d3.json(url).then(function(data){
+        // Get data for selected sampleID
+        let metadata = data.metadata;
+        let sampleMetadata = metadata.filter(metadata => metadata.id == sampleID);
+
+        // Extract data from JSON object to display
+        let sampleMetaID = sampleMetadata[0].id;
+        let sampleEthnicity = sampleMetadata[0].ethnicity;
+        let sampleGender = sampleMetadata[0].gender;
+        let sampleAge = sampleMetadata[0].age;
+        let sampleLocation = sampleMetadata[0].location;
+        let sampleBellyButtonType = sampleMetadata[0].bbtype;
+        let sampleWashFrequency = sampleMetadata[0].wfreq;
+
+    // Display the data
+    d3.select("#sample-metadata").append("p").text(`Sample ID: ${sampleMetaID}`);
+    d3.select("#sample-metadata").append("p").text(`Ethnicity: ${sampleEthnicity}`);
+    d3.select("#sample-metadata").append("p").text(`Gender: ${sampleGender}`);
+    d3.select("#sample-metadata").append("p").text(`Age: ${sampleAge}`);
+    d3.select("#sample-metadata").append("p").text(`Location: ${sampleLocation}`);
+    d3.select("#sample-metadata").append("p").text(`Belly Button Type: ${sampleBellyButtonType}`);
+    d3.select("#sample-metadata").append("p").text(`Wash Frequency (per week): ${sampleWashFrequency}`);
+    });
 };
 
 // Handle Changes - Update graphs
 function optionChanged(sampleID) {
-    console.log(`value is: ${sampleID}`);
     makeBarGraph(sampleID);
     makeBubbleChart(sampleID);
     showMetadata(sampleID);
@@ -96,15 +113,11 @@ function optionChanged(sampleID) {
 d3.json(url).then(function(data){
     // Create an HTML object line for each ID number, create <object> tags and add them to HTML with D3
     for (let j = 0; j < data.names.length; j++){
-        let objectValue = data.names[j]
-        //console.log(`objectValue = ${objectValue}`);
+        let objectValue = data.names[j];
         selector.append("option").property("value", objectValue).text(objectValue);
     }
     
     // Find the value of the dropdown
         let sampleID = selector.property("value");
-        console.log(`SampleID is: ${sampleID}`);
         optionChanged(sampleID);
-
-       
 });
