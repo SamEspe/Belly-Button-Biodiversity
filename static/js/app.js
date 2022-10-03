@@ -30,7 +30,7 @@ function makeBarGraph(sampleID){
         };
         
         let barLayout = {
-            title: "Top 10 OTUs Found in Individual"
+            title: "Top 10 OTUs Found in Samples"
         };
 
         let barTraceData = [barChartData];
@@ -67,7 +67,7 @@ function makeBubbleChart(sampleID){
         let bubbleTraceData = [bubbleChartData];
 
         let bubbleLayout = {
-            title: 'All OTU Groups Found in Individual'
+            title: 'All OTU Groups Found in Sample'
         }
 
         Plotly.newPlot("bubble", bubbleTraceData, bubbleLayout);
@@ -102,41 +102,42 @@ function showMetadata(sampleID){
         });
 };
 
-// Create the Gauge display
-function createGauge(sampleID){
-    // Obtain data to display
-    d3.json(url).then(function(data){
-        // Get data for selected sampleID
-        let metadata = data.metadata;
-        let sampleMetadata = metadata.filter(metadata => metadata.id == sampleID);
+// // Create the Gauge display
+// function createGauge(sampleID){
+//     // Obtain data to display
+//     d3.json(url).then(function(data){
+//         // Get data for selected sampleID
+//         let metadata = data.metadata;
+//         let sampleMetadata = metadata.filter(metadata => metadata.id == sampleID);
 
-        // Extract data from JSON object to display
-        let sampleWashFrequency = sampleMetadata[0].wfreq;
+//         // Extract data from JSON object to display
+//         let sampleWashFrequency = sampleMetadata[0].wfreq;
 
-        let gaugeData = {
-            domain: { x: [0, 1], y: [0, 1] },
-            value: sampleWashFrequency,
-            type: "indicator",
-            mode: "gauge+number"
-        };
+//         let gaugeData = {
+//             domain: { x: [0, 1], y: [0, 1] },
+//             range: {0:9},
+//             value: sampleWashFrequency,
+//             type: "indicator",
+//             mode: "gauge+number"
+//         };
 
-        let gaugeTraceData = [gaugeData];
+//         let gaugeTraceData = [gaugeData];
 
-        let gaugeLayout = {
-            title: "Number of Washes Per Week"
-        };
+//         let gaugeLayout = {
+//             title: "Number of Washes Per Week"
+//         };
 
-        Plotly.newPlot("gauge", gaugeTraceData, gaugeLayout);
-    });
+//         Plotly.newPlot("gauge", gaugeTraceData, gaugeLayout);
+//     });
 
-};
+// };
 
 // Handle Changes - Update graphs
 function optionChanged(sampleID) {
     makeBarGraph(sampleID);
     makeBubbleChart(sampleID);
     showMetadata(sampleID);
-    createGauge(sampleID);
+    // createGauge(sampleID);
 };
 
 //Create the dashboard
