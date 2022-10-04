@@ -14,6 +14,7 @@ function makeBarGraph(sampleID){
     d3.json(url).then(function(data){
         let samples = data.samples;
         let sampleData = samples.filter(samples => samples.id == sampleID);
+        console.log(sampleData);
 
         let sampleValues = sampleData[0].sample_values.slice(0,10).reverse();
         let otuIDs = sampleData[0].otu_ids.slice(0,10).reverse();
@@ -30,11 +31,12 @@ function makeBarGraph(sampleID){
         };
         
         let barLayout = {
-            title: "Top 10 OTUs Found in Samples"
+            title: "Top 10 OTUs Found in Samples",
+            height: 400
         };
 
         let barTraceData = [barChartData];
-
+        
         Plotly.newPlot("bar", barTraceData, barLayout);
     });
 };
@@ -67,10 +69,12 @@ function makeBubbleChart(sampleID){
         let bubbleTraceData = [bubbleChartData];
 
         let bubbleLayout = {
-            title: 'All OTU Groups Found in Sample'
+            title: 'All OTU Groups Found in Sample',
+            width: 600
         }
-
+        
         Plotly.newPlot("bubble", bubbleTraceData, bubbleLayout);
+        samples = "";
     });
 };
 
@@ -92,6 +96,8 @@ function showMetadata(sampleID){
         let sampleWashFrequency = sampleMetadata[0].wfreq;
 
         // Display the data
+        d3.select("#sample-metadata").html("");
+
         d3.select("#sample-metadata").append("p").text(`Sample ID: ${sampleMetaID}`);
         d3.select("#sample-metadata").append("p").text(`Ethnicity: ${sampleEthnicity}`);
         d3.select("#sample-metadata").append("p").text(`Gender: ${sampleGender}`);
@@ -138,6 +144,7 @@ function optionChanged(sampleID) {
     makeBubbleChart(sampleID);
     showMetadata(sampleID);
     // createGauge(sampleID);
+    sampleID = "";
 };
 
 //Create the dashboard
@@ -151,4 +158,5 @@ d3.json(url).then(function(data){
     // Find the value of the dropdown
         let sampleID = selector.property("value");
         optionChanged(sampleID);
+        sampleID = "";
 });
